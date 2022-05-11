@@ -1,7 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"rayt-go/pkg/utils"
+)
 
 func main() {
-	fmt.Println("rayt-go")
+	fmt.Println(utils.Pow2(0.1))
+	fmt.Println(utils.Pow3(0.1))
+	fmt.Println(utils.Pow4(0.1))
+	fmt.Println(utils.Pow5(0.1))
 }
