@@ -18,5 +18,6 @@ func main() {
 	fmt.Println(utils.Saturate(0.5))               // 0.5
 	fmt.Println(utils.Radians(1718.8733853924698)) // 30
 	fmt.Println(utils.Degrees(30))                 // rad × 180/π = 1718.8733853924698
-	fmt.Println(utils.Recip(2))
+	fmt.Println(utils.Recip(2))                    // 0.5
+	fmt.Println(utils.Mix(1, 5, 0.25))             // 2
 }
