@@ -15,4 +15,5 @@ func main() {
 		fmt.Println(rand.Float64())
 	}
 	fmt.Println(utils.Clamp(150, 100, 200)) // 150
+	fmt.Println(utils.Saturate(0.5))        // 0.5
 }
