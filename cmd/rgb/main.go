@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
-	"github.com/golang/geo/r3"
 )
 
 type RGB struct {
@@ -37,14 +35,12 @@ func (img Image) CreateP3Data() Image {
 	img.Header = img.CreateHeader()
 	for j := 0; j < img.Y; j++ {
 		for i := 0; i < img.X; i++ {
-			vec := r3.Vector{
-				X: float64(i) / float64(img.X),
-				Y: float64(j) / float64(img.Y),
-				Z: 0.2,
-			}
-			img.Color.R = int(255.99 * vec.X)
-			img.Color.G = int(255.99 * vec.Y)
-			img.Color.B = int(255.99 * vec.Z)
+			r := float64(i) / float64(img.X)
+			g := float64(j) / float64(img.Y)
+			b := 0.2
+			img.Color.R = int(255.99 * r)
+			img.Color.G = int(255.99 * g)
+			img.Color.B = int(255.99 * b)
 			img.Body.WriteString(fmt.Sprintf(BodyFormat, img.Color.R, img.Color.G, img.Color.B))
 		}
 	}
@@ -71,8 +67,8 @@ func (img Image) CreateFile(filename string, header string, body string) error {
 func main() {
 	img := Image{}
 	img.Format = "P3"
-	img.X = 512
-	img.Y = 512
+	img.X = 200
+	img.Y = 100
 	img.MaxBright = 255
 	result := img.CreateP3Data()
 
