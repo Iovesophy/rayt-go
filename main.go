@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"math"
+	"math/big"
 	"os"
 	"strings"
 
@@ -29,22 +31,117 @@ type Image struct {
 	Color     RGB
 }
 
+type Ray struct {
+	Origin    r3.Vector
+	Direction r3.Vector
+}
+
+func NewRay(origin r3.Vector, direction r3.Vector) Ray {
+	return Ray{Origin: origin, Direction: direction}
+}
+
+// 線形補完 パラメータtで補完している
+func (r Ray) PointAtParameter(t float64) r3.Vector {
+	return r3.Vector{
+		X: r.Origin.X + t*r.Direction.X,
+		Y: r.Origin.Y + t*r.Direction.Y,
+		Z: r.Origin.Z + t*r.Direction.Z,
+	}
+}
+
+func HitSphere(center r3.Vector, radius float64, ray Ray) bool {
+	oc := ray.Origin.Sub(center)
+	a := ray.Direction.Dot(ray.Direction)
+	b := 2.0 * oc.Dot(ray.Direction)
+	c := oc.Dot(oc) - radius*radius
+	detect := b*b-4*a*c >= 0
+	return detect
+}
+
+func Color(ray Ray) r3.Vector {
+	center := r3.Vector{
+		X: 0,
+		Y: 0,
+		Z: -1,
+	}
+	if HitSphere(center, 0.6, ray) {
+		return r3.Vector{
+			X: 0.2,
+			Y: 1.0,
+			Z: 0.2,
+		}
+	}
+	unit := ray.Direction.Normalize()
+	t := 0.5*unit.Y + 1.0
+	result := r3.Vector{
+		X: 1.0,
+		Y: 1.0,
+		Z: 1.0,
+	}.Add(
+		r3.Vector{
+			X: 0.2,
+			Y: 0.3,
+			Z: 0.2,
+		}.Mul(
+			t,
+		))
+	return result
+}
+
 func (img Image) CreateHeader() string {
 	return fmt.Sprintf(HeaderFormat, img.Format, img.X, img.Y, img.MaxBright)
 }
 
+func Gcd(m, n uint64) uint64 {
+	x := new(big.Int)
+	y := new(big.Int)
+	z := new(big.Int)
+	a := new(big.Int).SetUint64(m)
+	b := new(big.Int).SetUint64(n)
+	return z.GCD(x, y, a, b).Uint64()
+}
+
 func (img Image) CreateP3Data() Image {
+	gcd := Gcd(uint64(img.X), uint64(img.Y))
+	x := float64(img.X) / float64(gcd)
+	y := float64(img.Y) / float64(gcd)
+	fmt.Println(x, y)
 	img.Header = img.CreateHeader()
+	lowerLeftCorner := r3.Vector{
+		X: -x,
+		Y: -y,
+		Z: -1.0,
+	}
+	// lowerLeftCornerから基底ベクトルを求める
+	horizontal := r3.Vector{
+		X: math.Abs(lowerLeftCorner.X * 2.0),
+		Y: 0.0,
+		Z: 0.0,
+	}
+	vertical := r3.Vector{
+		X: 0.0,
+		Y: math.Abs(lowerLeftCorner.Y * 2.0),
+		Z: 0.0,
+	}
+	origin := r3.Vector{
+		X: 0.0,
+		Y: 0.0,
+		Z: 0.0,
+	}
 	for j := 0; j < img.Y; j++ {
 		for i := 0; i < img.X; i++ {
-			vec := r3.Vector{
-				X: float64(i) / float64(img.X),
-				Y: float64(j) / float64(img.Y),
-				Z: 0.2,
-			}
-			img.Color.R = int(255.99 * vec.X)
-			img.Color.G = int(255.99 * vec.Y)
-			img.Color.B = int(255.99 * vec.Z)
+			h := float64(i) / float64(img.X)
+			v := float64(j) / float64(img.Y)
+			ray := NewRay(
+				origin,
+				lowerLeftCorner.Add(
+					horizontal.Mul(h).Add(vertical.Mul(v)),
+				),
+			)
+			col := Color(ray)
+			img.Color.R = int(255.99 * col.X)
+			img.Color.G = int(255.99 * col.Y)
+			img.Color.B = int(255.99 * col.Z)
 			img.Body.WriteString(fmt.Sprintf(BodyFormat, img.Color.R, img.Color.G, img.Color.B))
 		}
 	}
@@ -71,8 +168,8 @@ func (img Image) CreateFile(filename string, header string, body string) error {
 func main() {
 	img := Image{}
 	img.Format = "P3"
-	img.X = 512
-	img.Y = 512
+	img.X = 800
+	img.Y = 400
 	img.MaxBright = 255
 	result := img.CreateP3Data()
 
