@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"math"
+	"math/big"
 	"os"
 	"strings"
 
@@ -52,7 +54,6 @@ func HitSphere(center r3.Vector, radius float64, ray Ray) bool {
 	a := ray.Direction.Dot(ray.Direction)
 	b := 2.0 * oc.Dot(ray.Direction)
 	c := oc.Dot(oc) - radius*radius
-
 	detect := b*b-4*a*c >= 0
 	return detect
 }
@@ -71,7 +72,7 @@ func Color(ray Ray) r3.Vector {
 		}
 	}
 	unit := ray.Direction.Normalize()
-	t := unit.Y + 1
+	t := 0.5*unit.Y + 1.0
 	result := r3.Vector{
 		X: 1.0,
 		Y: 1.0,
@@ -91,21 +92,35 @@ func (img Image) CreateHeader() string {
 	return fmt.Sprintf(HeaderFormat, img.Format, img.X, img.Y, img.MaxBright)
 }
 
+func Gcd(m, n uint64) uint64 {
+	x := new(big.Int)
+	y := new(big.Int)
+	z := new(big.Int)
+	a := new(big.Int).SetUint64(m)
+	b := new(big.Int).SetUint64(n)
+	return z.GCD(x, y, a, b).Uint64()
+}
+
 func (img Image) CreateP3Data() Image {
+	gcd := Gcd(uint64(img.X), uint64(img.Y))
+	x := float64(img.X) / float64(gcd)
+	y := float64(img.Y) / float64(gcd)
+	fmt.Println(x, y)
 	img.Header = img.CreateHeader()
 	lowerLeftCorner := r3.Vector{
-		X: -2.0,
-		Y: -1.0,
+		X: -x,
+		Y: -y,
 		Z: -1.0,
 	}
+	// lowerLeftCornerから基底ベクトルを求める
 	horizontal := r3.Vector{
-		X: 4.0,
+		X: math.Abs(lowerLeftCorner.X * 2.0),
 		Y: 0.0,
 		Z: 0.0,
 	}
 	vertical := r3.Vector{
 		X: 0.0,
-		Y: 2.0,
+		Y: math.Abs(lowerLeftCorner.Y * 2.0),
 		Z: 0.0,
 	}
 	origin := r3.Vector{
