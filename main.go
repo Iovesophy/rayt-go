@@ -74,15 +74,26 @@ func Color(ray Ray) r3.Vector {
 		Y: 0,
 		Z: -1,
 	}
-	if HitSphere(center, 0.6, ray) {
-		return r3.Vector{
-			X: 0.2,
-			Y: 1.0,
-			Z: 0.2,
-		}
+	t := HitSphere(center, 0.6, ray)
+	if t > 0 {
+		n := ray.PointAtParameter(t).Sub(center).Normalize()
+		result := r3.Vector{
+			X: n.X,
+			Y: n.Y,
+			Z: n.Z,
+		}.Add(
+			r3.Vector{
+				X: 1.0,
+				Y: 1.0,
+				Z: 1.0,
+			}).Mul(
+			0.5,
+		)
+		return result
 	}
+
 	unit := ray.Direction.Normalize()
-	t := 0.5*unit.Y + 1.0
+	t = 0.5*unit.Y + 1.0
 	result := r3.Vector{
 		X: 1.0,
 		Y: 1.0,
