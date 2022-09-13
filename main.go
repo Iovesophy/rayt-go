@@ -49,13 +49,23 @@ func (r Ray) PointAtParameter(t float64) r3.Vector {
 	}
 }
 
-func HitSphere(center r3.Vector, radius float64, ray Ray) bool {
+func Solver(a float64, b float64, c float64) float64 {
+	return (-b - math.Sqrt(Detector(a,b,c))) / (2.0 * a)
+}
+
+func Detector(a float64, b float64, c float64) float64 {
+	return b*b - 4*a*c
+}
+
+func HitSphere(center r3.Vector, radius float64, ray Ray) float64 {
 	oc := ray.Origin.Sub(center)
 	a := ray.Direction.Dot(ray.Direction)
 	b := 2.0 * oc.Dot(ray.Direction)
 	c := oc.Dot(oc) - radius*radius
-	detect := b*b-4*a*c >= 0
-	return detect
+	if Detector(a,b,c) < 0 {
+		return -1.0
+	}
+	return Solver(a, b, c)
 }
 
 func Color(ray Ray) r3.Vector {
