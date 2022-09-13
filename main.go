@@ -50,7 +50,7 @@ func (r Ray) PointAtParameter(t float64) r3.Vector {
 }
 
 func Solver(a float64, b float64, c float64) float64 {
-	return (-b - math.Sqrt(Detector(a,b,c))) / (2.0 * a)
+	return (-b - math.Sqrt(Detector(a, b, c))) / (2.0 * a)
 }
 
 func Detector(a float64, b float64, c float64) float64 {
@@ -62,7 +62,7 @@ func HitSphere(center r3.Vector, radius float64, ray Ray) float64 {
 	a := ray.Direction.Dot(ray.Direction)
 	b := 2.0 * oc.Dot(ray.Direction)
 	c := oc.Dot(oc) - radius*radius
-	if Detector(a,b,c) < 0 {
+	if Detector(a, b, c) < 0 {
 		return -1.0
 	}
 	return Solver(a, b, c)
@@ -70,35 +70,37 @@ func HitSphere(center r3.Vector, radius float64, ray Ray) float64 {
 
 func Color(ray Ray) r3.Vector {
 	center := r3.Vector{
-		X: 0,
-		Y: 0,
-		Z: -1,
+		X: 0.0,
+		Y: 0.0,
+		Z: -1.0,
 	}
-	t := HitSphere(center, 0.6, ray)
-	if t > 0 {
+	unitVector := r3.Vector{
+		X: 1.0,
+		Y: 1.0,
+		Z: 1.0,
+	}
+
+	// Sphere
+	sphereSize := 0.6
+	t := HitSphere(center, sphereSize, ray)
+	if t > 0.0 {
 		n := ray.PointAtParameter(t).Sub(center).Normalize()
 		result := r3.Vector{
 			X: n.X,
 			Y: n.Y,
 			Z: n.Z,
 		}.Add(
-			r3.Vector{
-				X: 1.0,
-				Y: 1.0,
-				Z: 1.0,
-			}).Mul(
+			unitVector,
+		).Mul(
 			0.5,
 		)
 		return result
 	}
 
+	// Background
 	unit := ray.Direction.Normalize()
 	t = 0.5*unit.Y + 1.0
-	result := r3.Vector{
-		X: 1.0,
-		Y: 1.0,
-		Z: 1.0,
-	}.Add(
+	result := unitVector.Add(
 		r3.Vector{
 			X: 0.2,
 			Y: 0.3,
