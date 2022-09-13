@@ -102,9 +102,9 @@ func Color(ray Ray) r3.Vector {
 	t = 0.5*unit.Y + 1.0
 	result := unitVector.Add(
 		r3.Vector{
-			X: 0.2,
-			Y: 0.3,
-			Z: 0.2,
+			X: 0.7,
+			Y: 0.7,
+			Z: 0.7,
 		}.Mul(
 			t,
 		))
