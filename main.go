@@ -51,7 +51,6 @@ func (img Image) CreateP3Data() Image {
 	gcd := Gcd(uint64(img.X), uint64(img.Y))
 	x := float64(img.X) / float64(gcd)
 	y := float64(img.Y) / float64(gcd)
-	fmt.Println(x, y)
 	img.Header = img.CreateHeader()
 	lowerLeftCorner := r3.Vector{
 		X: -x,
