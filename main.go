@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
+	"rayt-go/pkg/ray"
 	"rayt-go/pkg/scene"
-	"rayt-go/pkg/sphere"
 
 	"github.com/golang/geo/r3"
 )
@@ -32,49 +32,6 @@ type Image struct {
 	Header    string
 	Body      strings.Builder
 	Color     RGB
-}
-
-func Color(ray scene.Ray) r3.Vector {
-	center := r3.Vector{
-		X: 0.0,
-		Y: 0.0,
-		Z: -1.0,
-	}
-	unitVector := r3.Vector{
-		X: 1.0,
-		Y: 1.0,
-		Z: 1.0,
-	}
-
-	// Sphere
-	sphereSize := 0.6
-	t := sphere.Hit(center, sphereSize, ray)
-	if t > 0.0 {
-		n := scene.PointAtParameter(t, ray).Sub(center).Normalize()
-		result := r3.Vector{
-			X: n.X,
-			Y: n.Y,
-			Z: n.Z,
-		}.Add(
-			unitVector,
-		).Mul(
-			0.5,
-		)
-		return result
-	}
-
-	// Background
-	unit := ray.Direction.Normalize()
-	t = 0.5*unit.Y + 1.0
-	result := unitVector.Add(
-		r3.Vector{
-			X: 0.7,
-			Y: 0.7,
-			Z: 0.7,
-		}.Mul(
-			t,
-		))
-	return result
 }
 
 func (img Image) CreateHeader() string {
@@ -121,16 +78,16 @@ func (img Image) CreateP3Data() Image {
 		for i := 0; i < img.X; i++ {
 			h := float64(i) / float64(img.X)
 			v := float64(j) / float64(img.Y)
-			ray := scene.NewRay(
+			r := ray.New(
 				origin,
 				lowerLeftCorner.Add(
 					horizontal.Mul(h).Add(vertical.Mul(v)),
 				),
 			)
-			col := Color(ray)
-			img.Color.R = int(255.99 * col.X)
-			img.Color.G = int(255.99 * col.Y)
-			img.Color.B = int(255.99 * col.Z)
+			pixel := scene.Pixel(r)
+			img.Color.R = int(255.99 * pixel.X)
+			img.Color.G = int(255.99 * pixel.Y)
+			img.Color.B = int(255.99 * pixel.Z)
 			img.Body.WriteString(fmt.Sprintf(BodyFormat, img.Color.R, img.Color.G, img.Color.B))
 		}
 	}
