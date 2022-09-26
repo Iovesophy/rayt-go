@@ -7,6 +7,7 @@ import (
 	"rayt-go/pkg/scene"
 	"rayt-go/pkg/utils"
 	"strings"
+	"sync"
 
 	"github.com/golang/geo/r3"
 )
@@ -62,22 +63,37 @@ func (img Elements) CreateP3Data() Elements {
 		Y: 0.0,
 		Z: 0.0,
 	}
+	wg := new(sync.WaitGroup)
+	mu := new(sync.Mutex)
+	p := make([]string, img.X*img.Y)
+	wg.Add(img.X * img.Y)
 	for j := 0; j < img.Y; j++ {
 		for i := 0; i < img.X; i++ {
-			h := float64(i) / float64(img.X)
-			v := float64(j) / float64(img.Y)
-			r := ray.New(
-				origin,
-				lowerLeftCorner.Add(
-					horizontal.Mul(h).Add(vertical.Mul(v)),
-				),
-			)
-			pixel := scene.Pixel(r)
-			img.Color.R = int(255.99 * pixel.X)
-			img.Color.G = int(255.99 * pixel.Y)
-			img.Color.B = int(255.99 * pixel.Z)
-			img.Body.WriteString(fmt.Sprintf(BodyFormat, img.Color.R, img.Color.G, img.Color.B))
+			go Render(i, j, origin, lowerLeftCorner, horizontal, vertical, wg, mu, &img, p)
 		}
 	}
+	wg.Wait()
+	for _, v := range p {
+		img.Body.WriteString(v)
+	}
 	return img
+}
+
+func Render(i int, j int, origin r3.Vector, lowerLeftCorner r3.Vector, horizontal r3.Vector, vertical r3.Vector, wg *sync.WaitGroup, mu *sync.Mutex, img *Elements, p []string) {
+	mu.Lock()
+	defer mu.Unlock()
+	defer wg.Done()
+	h := float64(i) / float64(img.X)
+	v := float64(j) / float64(img.Y)
+	ray := ray.New(
+		origin,
+		lowerLeftCorner.Add(
+			horizontal.Mul(h).Add(vertical.Mul(v)),
+		),
+	)
+	color := scene.Pixel(ray)
+	img.Color.R = int(255.99 * color.X)
+	img.Color.G = int(255.99 * color.Y)
+	img.Color.B = int(255.99 * color.Z)
+	p[i+j*img.X] = fmt.Sprintf(BodyFormat, img.Color.R, img.Color.G, img.Color.B)
 }
