@@ -7,6 +7,9 @@ import (
 	"os"
 	"strings"
 
+	"rayt-go/pkg/scene"
+	"rayt-go/pkg/sphere"
+
 	"github.com/golang/geo/r3"
 )
 
@@ -31,44 +34,7 @@ type Image struct {
 	Color     RGB
 }
 
-type Ray struct {
-	Origin    r3.Vector
-	Direction r3.Vector
-}
-
-func NewRay(origin r3.Vector, direction r3.Vector) Ray {
-	return Ray{Origin: origin, Direction: direction}
-}
-
-// 線形補完 パラメータtで補完している
-func (r Ray) PointAtParameter(t float64) r3.Vector {
-	return r3.Vector{
-		X: r.Origin.X + t*r.Direction.X,
-		Y: r.Origin.Y + t*r.Direction.Y,
-		Z: r.Origin.Z + t*r.Direction.Z,
-	}
-}
-
-func Solver(a float64, b float64, c float64) float64 {
-	return (-b - math.Sqrt(Detector(a, b, c))) / (2.0 * a)
-}
-
-func Detector(a float64, b float64, c float64) float64 {
-	return b*b - 4*a*c
-}
-
-func HitSphere(center r3.Vector, radius float64, ray Ray) float64 {
-	oc := ray.Origin.Sub(center)
-	a := ray.Direction.Dot(ray.Direction)
-	b := 2.0 * oc.Dot(ray.Direction)
-	c := oc.Dot(oc) - radius*radius
-	if Detector(a, b, c) < 0 {
-		return -1.0
-	}
-	return Solver(a, b, c)
-}
-
-func Color(ray Ray) r3.Vector {
+func Color(ray scene.Ray) r3.Vector {
 	center := r3.Vector{
 		X: 0.0,
 		Y: 0.0,
@@ -82,9 +48,9 @@ func Color(ray Ray) r3.Vector {
 
 	// Sphere
 	sphereSize := 0.6
-	t := HitSphere(center, sphereSize, ray)
+	t := sphere.Hit(center, sphereSize, ray)
 	if t > 0.0 {
-		n := ray.PointAtParameter(t).Sub(center).Normalize()
+		n := scene.PointAtParameter(t, ray).Sub(center).Normalize()
 		result := r3.Vector{
 			X: n.X,
 			Y: n.Y,
@@ -155,7 +121,7 @@ func (img Image) CreateP3Data() Image {
 		for i := 0; i < img.X; i++ {
 			h := float64(i) / float64(img.X)
 			v := float64(j) / float64(img.Y)
-			ray := NewRay(
+			ray := scene.NewRay(
 				origin,
 				lowerLeftCorner.Add(
 					horizontal.Mul(h).Add(vertical.Mul(v)),
