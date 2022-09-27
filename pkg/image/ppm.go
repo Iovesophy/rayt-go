@@ -28,6 +28,7 @@ type Elements struct {
 	Header    string
 	Body      strings.Builder
 	Color     RGB
+	World     []geometry.Hitable
 }
 
 func (img Elements) CreateHeader() string {
@@ -89,7 +90,7 @@ func Render(i int, j int, origin r3.Vector, lowerLeftCorner r3.Vector, horizonta
 		),
 	)
 	sky := scene.Color{X: 0.5, Y: 0.7, Z: 1.0}
-	world := geometry.New(scene.CreateWorld())
+	world := geometry.New(img.World)
 	color := sky.Pixel(ray, world)
 	if int(255.99*color.X) < 256 {
 		img.Color.R = int(255.99 * color.X)
