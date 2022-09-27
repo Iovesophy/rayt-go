@@ -1,57 +1,52 @@
 package scene
 
 import (
+	"math"
+	"rayt-go/pkg/geometry"
 	"rayt-go/pkg/ray"
-	"rayt-go/pkg/sphere"
 
 	"github.com/golang/geo/r3"
 )
 
-var center = r3.Vector{
-	X: 0.0,
-	Y: 0.0,
-	Z: -1.0,
-}
-var unitVector = r3.Vector{
-	X: 1.0,
-	Y: 1.0,
-	Z: 1.0,
+type Color struct {
+	X float64
+	Y float64
+	Z float64
 }
 
-func Pixel(r ray.VertexPair) r3.Vector {
-	sphereSize := 0.6
-	t := sphere.Hit(center, sphereSize, r)
-	if t > 0.0 {
-		n := PointAtParameter(t, r).Sub(center).Normalize()
-		result := r3.Vector{
-			X: n.X,
-			Y: n.Y,
-			Z: n.Z,
-		}.Add(
-			unitVector,
-		).Mul(
-			0.5,
-		)
-		return result
+func (color Color) Pixel(vertexpair ray.VertexPair, world geometry.Hitable) r3.Vector {
+	var record geometry.Record
+	t := world.Hit(vertexpair, 0, math.MaxFloat64, &record)
+	if t {
+		return r3.Vector{X: record.Normal.X + 1, Y: record.Normal.Y + 1, Z: record.Normal.Z + 1}.Mul(0.5)
 	}
-	return Background(r)
+	return color.Background(vertexpair)
 }
 
-func Background(r ray.VertexPair) r3.Vector {
+func (color Color) Background(vertexpair ray.VertexPair) r3.Vector {
 	unitVector := r3.Vector{
 		X: 1.0,
 		Y: 1.0,
 		Z: 1.0,
 	}
-	unit := r.Direction.Normalize()
+	unit := vertexpair.Direction.Normalize()
 	t := 0.5*unit.Y + 1.0
-	result := unitVector.Add(
+	result := unitVector.Mul(1.0 - t).Add(
 		r3.Vector{
-			X: 0.7,
-			Y: 0.7,
-			Z: 0.7,
+			X: color.X,
+			Y: color.Y,
+			Z: color.Z,
 		}.Mul(
 			t,
 		))
 	return result
+}
+
+func CreateWorld() []geometry.Hitable {
+	var world []geometry.Hitable
+	world = append(world,
+		geometry.NewSphere(r3.Vector{X: 0, Y: 0, Z: -1.5}, 0.925),
+		geometry.NewSphere(r3.Vector{X: 0, Y: 100.925, Z: -1.5}, 100),
+	)
+	return world
 }
