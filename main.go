@@ -11,7 +11,6 @@ func main() {
 	img.Y = 400
 	img.MaxBright = 255
 	result := img.CreateP3Data()
-
 	filename := "test.ppm"
 	img.CreateFile(filename, result.Header, result.Body.String())
 }

@@ -3,6 +3,8 @@ package image
 import (
 	"fmt"
 	"math"
+	"rayt-go/pkg/format"
+	"rayt-go/pkg/geometry"
 	"rayt-go/pkg/ray"
 	"rayt-go/pkg/scene"
 	"rayt-go/pkg/utils"
@@ -10,11 +12,6 @@ import (
 	"sync"
 
 	"github.com/golang/geo/r3"
-)
-
-const (
-	HeaderFormat = "%s\n%d %d\n%d\n"
-	BodyFormat   = "%d %d %d\n"
 )
 
 type RGB struct {
@@ -34,7 +31,7 @@ type Elements struct {
 }
 
 func (img Elements) CreateHeader() string {
-	return fmt.Sprintf(HeaderFormat, img.Format, img.X, img.Y, img.MaxBright)
+	return fmt.Sprintf(format.Header, img.Format, img.X, img.Y, img.MaxBright)
 }
 
 func (img Elements) CreateP3Data() Elements {
@@ -91,9 +88,23 @@ func Render(i int, j int, origin r3.Vector, lowerLeftCorner r3.Vector, horizonta
 			horizontal.Mul(h).Add(vertical.Mul(v)),
 		),
 	)
-	color := scene.Pixel(ray)
-	img.Color.R = int(255.99 * color.X)
-	img.Color.G = int(255.99 * color.Y)
-	img.Color.B = int(255.99 * color.Z)
-	p[i+j*img.X] = fmt.Sprintf(BodyFormat, img.Color.R, img.Color.G, img.Color.B)
+	sky := scene.Color{X: 0.5, Y: 0.7, Z: 1.0}
+	world := geometry.New(scene.CreateWorld())
+	color := sky.Pixel(ray, world)
+	if int(255.99*color.X) < 256 {
+		img.Color.R = int(255.99 * color.X)
+	} else {
+		img.Color.R = 255
+	}
+	if int(255.99*color.Y) < 256 {
+		img.Color.G = int(255.99 * color.Y)
+	} else {
+		img.Color.G = 255
+	}
+	if int(255.99*color.Z) < 256 {
+		img.Color.B = int(255.99 * color.Z)
+	} else {
+		img.Color.B = 255
+	}
+	p[i+j*img.X] = fmt.Sprintf(format.Body, img.Color.R, img.Color.G, img.Color.B)
 }

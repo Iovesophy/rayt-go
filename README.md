@@ -1,4 +1,5 @@
 # rayt-go
+
 ray tracing by go
 
 1. rasterize
@@ -7,4 +8,8 @@ ray tracing by go
 
 2. calc normal vector
 
-![rasterize](assets/test2.png)
+![normal-vector](assets/test2.png)
+
+3. render multiple object
+
+![multiple-sphere](assets/test3.png)
