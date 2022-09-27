@@ -41,12 +41,3 @@ func (color Color) Background(vertexpair ray.VertexPair) r3.Vector {
 		))
 	return result
 }
-
-func CreateWorld() []geometry.Hitable {
-	var world []geometry.Hitable
-	world = append(world,
-		geometry.NewSphere(r3.Vector{X: 0, Y: 0, Z: -1.5}, 0.925),
-		geometry.NewSphere(r3.Vector{X: 0, Y: 100.925, Z: -1.5}, 100),
-	)
-	return world
-}
