@@ -2,16 +2,13 @@ package image
 
 import (
 	"fmt"
-	"math"
+	"math/rand"
 	"rayt-go/pkg/format"
 	"rayt-go/pkg/geometry"
-	"rayt-go/pkg/ray"
 	"rayt-go/pkg/scene"
-	"rayt-go/pkg/utils"
+	"rayt-go/pkg/scene/camera"
 	"strings"
 	"sync"
-
-	"github.com/golang/geo/r3"
 )
 
 type RGB struct {
@@ -24,11 +21,13 @@ type Elements struct {
 	Format    string
 	X         int
 	Y         int
+	Sampling  int
 	MaxBright int
 	Header    string
 	Body      strings.Builder
 	Color     RGB
 	World     []geometry.Hitable
+	Camera    camera.Parts
 }
 
 func (img Elements) CreateHeader() string {
@@ -36,38 +35,14 @@ func (img Elements) CreateHeader() string {
 }
 
 func (img Elements) CreateP3Data() Elements {
-	gcd := utils.Gcd(uint64(img.X), uint64(img.Y))
-	x := float64(img.X) / float64(gcd)
-	y := float64(img.Y) / float64(gcd)
 	img.Header = img.CreateHeader()
-	lowerLeftCorner := r3.Vector{
-		X: -x,
-		Y: -y,
-		Z: -1.0,
-	}
-	// lowerLeftCorner から基底ベクトルを求める
-	horizontal := r3.Vector{
-		X: math.Abs(lowerLeftCorner.X * 2.0),
-		Y: 0.0,
-		Z: 0.0,
-	}
-	vertical := r3.Vector{
-		X: 0.0,
-		Y: math.Abs(lowerLeftCorner.Y * 2.0),
-		Z: 0.0,
-	}
-	origin := r3.Vector{
-		X: 0.0,
-		Y: 0.0,
-		Z: 0.0,
-	}
 	wg := new(sync.WaitGroup)
 	mu := new(sync.Mutex)
 	p := make([]string, img.X*img.Y)
 	wg.Add(img.X * img.Y)
 	for j := 0; j < img.Y; j++ {
 		for i := 0; i < img.X; i++ {
-			go Render(i, j, origin, lowerLeftCorner, horizontal, vertical, wg, mu, &img, p)
+			go Render(i, j, img.Camera, wg, mu, &img, p)
 		}
 	}
 	wg.Wait()
@@ -77,21 +52,20 @@ func (img Elements) CreateP3Data() Elements {
 	return img
 }
 
-func Render(i int, j int, origin r3.Vector, lowerLeftCorner r3.Vector, horizontal r3.Vector, vertical r3.Vector, wg *sync.WaitGroup, mu *sync.Mutex, img *Elements, p []string) {
+func Render(i int, j int, camera camera.Parts, wg *sync.WaitGroup, mu *sync.Mutex, img *Elements, p []string) {
 	mu.Lock()
 	defer mu.Unlock()
 	defer wg.Done()
-	h := float64(i) / float64(img.X)
-	v := float64(j) / float64(img.Y)
-	ray := ray.New(
-		origin,
-		lowerLeftCorner.Add(
-			horizontal.Mul(h).Add(vertical.Mul(v)),
-		),
-	)
 	sky := scene.Color{X: 0.5, Y: 0.7, Z: 1.0}
 	world := geometry.New(img.World)
-	color := sky.Pixel(ray, world)
+	color := scene.NewVector(0, 0, 0)
+	for s := 0; s < img.Sampling; s++ {
+		h := (float64(i) + rand.Float64()) / float64(img.X)
+		v := (float64(j) + rand.Float64()) / float64(img.Y)
+		ray := camera.GetCameraRay(h, v)
+		color = color.Add(sky.Pixel(ray, world))
+	}
+	color = color.Mul(1.0 / float64(img.Sampling))
 	if int(255.99*color.X) < 256 {
 		img.Color.R = int(255.99 * color.X)
 	} else {
