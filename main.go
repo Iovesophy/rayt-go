@@ -3,23 +3,23 @@ package main
 import (
 	"rayt-go/pkg/geometry"
 	"rayt-go/pkg/image"
+	"rayt-go/pkg/scene/camera"
 
 	"github.com/golang/geo/r3"
 )
 
 func main() {
-	img := image.Elements{}
-	img.Format = "P3"
-	img.X = 800
-	img.Y = 400
-	img.MaxBright = 255
-	var world []geometry.Hitable
-	world = append(world,
+	e := image.Elements{}
+	e.Format = "P3"
+	e.X = 800
+	e.Y = 400
+	e.Sampling = 100
+	e.MaxBright = 255
+	e.Camera = camera.New(camera.Main(e.X, e.Y))
+	e.World = append(e.World,
 		geometry.NewSphere(r3.Vector{X: 0, Y: 0, Z: -1.5}, 0.925),
 		geometry.NewSphere(r3.Vector{X: 0, Y: 100.925, Z: -1.5}, 100),
 	)
-	img.World = world
-	result := img.CreateP3Data()
-	filename := "test.ppm"
-	img.CreateFile(filename, result.Header, result.Body.String())
+	result := e.CreateP3Data()
+	e.CreateFile("test.ppm", result.Header, result.Body.String())
 }

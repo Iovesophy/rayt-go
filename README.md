@@ -13,3 +13,7 @@ ray tracing by go
 3. render multiple object
 
 ![multiple-sphere](assets/test3.png)
+
+4. enable antialias
+
+![enable-antialias](assets/test4.png)
