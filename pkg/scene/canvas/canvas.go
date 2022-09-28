@@ -32,7 +32,7 @@ func RandomInUnitSphere() r3.Vector {
 func (color Color) Pixel(vertexpair ray.VertexPair, world geometry.Hitable) r3.Vector {
 	var record geometry.Record
 	if world.Hit(vertexpair, 0.001, math.MaxFloat64, &record) {
-		// rand reflect
+		// diffuse reflection
 		target := record.VertexP.Add(record.Normal).Add(RandomInUnitSphere())
 		return color.Pixel(ray.New(record.VertexP, target.Sub(record.VertexP)), world).Mul(0.5)
 		// color mapping
