@@ -17,3 +17,7 @@ ray tracing by go
 4. enable antialias
 
 ![enable-antialias](assets/test4.png)
+
+5. enable diffuse reflection
+
+![enable-diffuse-reflection](assets/test5.png)
