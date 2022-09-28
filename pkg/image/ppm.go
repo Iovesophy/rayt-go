@@ -2,6 +2,7 @@ package image
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"rayt-go/pkg/format"
 	"rayt-go/pkg/geometry"
@@ -61,6 +62,8 @@ func Render(i int, j int, camera camera.Parts, wg *sync.WaitGroup, mu *sync.Mute
 	defer wg.Done()
 	color := scene.NewVector(0, 0, 0)
 	SuperSampling(i, j, camera, &color, geometry.New(img.World), canvas.Color{X: 0.5, Y: 0.7, Z: 1.0}, img)
+	// fix ganma
+	color = scene.NewVector(math.Sqrt(color.X), math.Sqrt(color.Y), math.Sqrt(color.Z))
 	RGBValidation(color, img)
 	p[i+j*img.X] = fmt.Sprintf(format.Body, img.Color.R, img.Color.G, img.Color.B)
 }
