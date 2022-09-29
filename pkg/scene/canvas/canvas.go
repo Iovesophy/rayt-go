@@ -2,8 +2,8 @@ package canvas
 
 import (
 	"math"
-	"math/rand"
 	"rayt-go/pkg/geometry"
+	"rayt-go/pkg/prand"
 	"rayt-go/pkg/ray"
 	"rayt-go/pkg/scene"
 
@@ -21,7 +21,10 @@ type Color struct {
 func RandomInUnitSphere() r3.Vector {
 	var p = scene.NewVector(0, 0, 0)
 	for {
-		p = scene.NewVector(rand.Float64(), rand.Float64(), rand.Float64()).Mul(2).Sub(unitVector)
+		randfloat64X, _ := prand.Float64()
+		randfloat64Y, _ := prand.Float64()
+		randfloat64Z, _ := prand.Float64()
+		p = scene.NewVector(randfloat64X, randfloat64Y, randfloat64Z).Mul(2).Sub(unitVector)
 		if p.Norm2() < 1 {
 			break
 		}

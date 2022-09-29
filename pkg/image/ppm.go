@@ -3,9 +3,9 @@ package image
 import (
 	"fmt"
 	"math"
-	"math/rand"
 	"rayt-go/pkg/format"
 	"rayt-go/pkg/geometry"
+	"rayt-go/pkg/prand"
 	"rayt-go/pkg/scene"
 	"rayt-go/pkg/scene/camera"
 	"rayt-go/pkg/scene/canvas"
@@ -70,8 +70,10 @@ func Render(i int, j int, camera camera.Parts, wg *sync.WaitGroup, mu *sync.Mute
 
 func SuperSampling(i int, j int, camera camera.Parts, color *r3.Vector, world geometry.World, sky canvas.Color, img *Elements) {
 	for s := 0; s < img.Sampling; s++ {
-		h := (float64(i) + rand.Float64()) / float64(img.X)
-		v := (float64(j) + rand.Float64()) / float64(img.Y)
+		randfloat64A, _ := prand.Float64()
+		h := (float64(i) + randfloat64A) / float64(img.X)
+		randfloat64B, _ := prand.Float64()
+		v := (float64(j) + randfloat64B) / float64(img.Y)
 		ray := camera.Ray(h, v)
 		*color = color.Add(sky.Pixel(ray, world))
 	}
