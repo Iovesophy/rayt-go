@@ -21,3 +21,7 @@ ray tracing by go
 5. enable diffuse reflection
 
 ![enable-diffuse-reflection](assets/test5.png)
+
+6. ping pong animation
+
+![pingpong-animation](assets/pingpong.gif)
