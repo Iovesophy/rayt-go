@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+	//defer profile.Start(profile.ProfilePath("./assets")).Stop()
 	e := image.Elements{}
 	e.Format = "P3"
 	e.X = 800
