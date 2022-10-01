@@ -1,5 +1,7 @@
 package prand
 
+// mono0x/prand Package (MIT LICENCE) https://github.com/mono0x/prand
+
 import (
 	"bytes"
 	cryptorand "crypto/rand"

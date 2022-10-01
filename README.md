@@ -25,3 +25,9 @@ ray tracing by go
 6. ping pong animation
 
 ![pingpong-animation](assets/pingpong.gif)
+
+7. improvement render speed
+
+![before](assets/usemathrand.png)
+
+![after](assets/useprand.png)

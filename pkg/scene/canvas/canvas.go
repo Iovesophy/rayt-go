@@ -21,9 +21,18 @@ type Color struct {
 func RandomInUnitSphere() r3.Vector {
 	var p = scene.NewVector(0, 0, 0)
 	for {
-		randfloat64X, _ := prand.Float64()
-		randfloat64Y, _ := prand.Float64()
-		randfloat64Z, _ := prand.Float64()
+		randfloat64X, err := prand.Float64()
+		if err != nil {
+			panic(err)
+		}
+		randfloat64Y, err := prand.Float64()
+		if err != nil {
+			panic(err)
+		}
+		randfloat64Z, err := prand.Float64()
+		if err != nil {
+			panic(err)
+		}
 		p = scene.NewVector(randfloat64X, randfloat64Y, randfloat64Z).Mul(2).Sub(unitVector)
 		if p.Norm2() < 1 {
 			break
