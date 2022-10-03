@@ -79,7 +79,7 @@ func SuperSampling(i int, j int, camera camera.Parts, color *r3.Vector, world ge
 		}
 		v := (float64(j) + randfloat64B) / float64(img.Y)
 		ray := camera.Ray(h, v)
-		*color = color.Add(sky.Pixel(ray, world))
+		*color = color.Add(sky.Pixel(ray, world, 0))
 	}
 	*color = color.Mul(1.0 / float64(img.Sampling))
 }

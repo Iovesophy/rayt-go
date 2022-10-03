@@ -5,6 +5,8 @@ import (
 
 	"github.com/Iovesophy/rayt-go/pkg/geometry"
 	"github.com/Iovesophy/rayt-go/pkg/image"
+	"github.com/Iovesophy/rayt-go/pkg/material"
+	"github.com/Iovesophy/rayt-go/pkg/scene"
 	"github.com/Iovesophy/rayt-go/pkg/scene/camera"
 
 	"github.com/golang/geo/r3"
@@ -19,8 +21,8 @@ func Frame(frame int, i int) {
 	e.MaxBright = 255
 	e.Camera = camera.New(camera.Main(e.X, e.Y))
 	e.World = append(e.World,
-		geometry.NewSphere(r3.Vector{X: 0, Y: -0.1 * float64(i), Z: -1.5}, 0.5),
-		geometry.NewSphere(r3.Vector{X: 0, Y: 100.5, Z: -1.5}, 100),
+		geometry.NewSphere(r3.Vector{X: 0, Y: -0.1 * float64(i), Z: -1.5}, 0.5, material.NewLambertian(scene.NewVector(0.8, 0.3, 0.3))),
+		geometry.NewSphere(r3.Vector{X: 0, Y: 100.5, Z: -1.5}, 100, material.NewLambertian(scene.NewVector(0.8, 0.8, 0))),
 	)
 	result := e.CreateP3Data()
 	e.CreateFile("pingpong"+strconv.Itoa(frame)+".ppm", result.Header, result.Body.String())
