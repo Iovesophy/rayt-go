@@ -1,9 +1,9 @@
 package main
 
 import (
-	"rayt-go/pkg/geometry"
-	"rayt-go/pkg/image"
-	"rayt-go/pkg/scene/camera"
+	"github.com/Iovesophy/rayt-go/pkg/geometry"
+	"github.com/Iovesophy/rayt-go/pkg/image"
+	"github.com/Iovesophy/rayt-go/pkg/scene/camera"
 
 	"github.com/golang/geo/r3"
 )

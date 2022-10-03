@@ -1,8 +1,8 @@
 package canvas
 
 import (
-	"rayt-go/pkg/ray"
-	"rayt-go/pkg/scene"
+	"github.com/Iovesophy/rayt-go/pkg/ray"
+	"github.com/Iovesophy/rayt-go/pkg/scene"
 
 	"github.com/golang/geo/r3"
 )

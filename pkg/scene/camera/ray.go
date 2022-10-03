@@ -1,6 +1,6 @@
 package camera
 
-import "rayt-go/pkg/ray"
+import "github.com/Iovesophy/rayt-go/pkg/ray"
 
 func (camera Parts) Ray(h, v float64) ray.VertexPair {
 	return ray.New(

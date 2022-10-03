@@ -2,8 +2,9 @@ package camera
 
 import (
 	"math"
-	"rayt-go/pkg/scene"
-	"rayt-go/pkg/utils"
+
+	"github.com/Iovesophy/rayt-go/pkg/scene"
+	"github.com/Iovesophy/rayt-go/pkg/utils"
 
 	"github.com/golang/geo/r3"
 )
