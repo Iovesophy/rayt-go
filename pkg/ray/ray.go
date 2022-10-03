@@ -1,7 +1,7 @@
 package ray
 
 import (
-	"rayt-go/pkg/scene"
+	"github.com/Iovesophy/rayt-go/pkg/scene"
 
 	"github.com/golang/geo/r3"
 )

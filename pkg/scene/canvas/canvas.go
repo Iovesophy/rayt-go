@@ -2,10 +2,11 @@ package canvas
 
 import (
 	"math"
-	"rayt-go/pkg/geometry"
-	"rayt-go/pkg/prand"
-	"rayt-go/pkg/ray"
-	"rayt-go/pkg/scene"
+
+	"github.com/Iovesophy/rayt-go/pkg/geometry"
+	"github.com/Iovesophy/rayt-go/pkg/prand"
+	"github.com/Iovesophy/rayt-go/pkg/ray"
+	"github.com/Iovesophy/rayt-go/pkg/scene"
 
 	"github.com/golang/geo/r3"
 )

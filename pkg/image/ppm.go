@@ -3,14 +3,15 @@ package image
 import (
 	"fmt"
 	"math"
-	"rayt-go/pkg/format"
-	"rayt-go/pkg/geometry"
-	"rayt-go/pkg/prand"
-	"rayt-go/pkg/scene"
-	"rayt-go/pkg/scene/camera"
-	"rayt-go/pkg/scene/canvas"
 	"strings"
 	"sync"
+
+	"github.com/Iovesophy/rayt-go/pkg/format"
+	"github.com/Iovesophy/rayt-go/pkg/geometry"
+	"github.com/Iovesophy/rayt-go/pkg/prand"
+	"github.com/Iovesophy/rayt-go/pkg/scene"
+	"github.com/Iovesophy/rayt-go/pkg/scene/camera"
+	"github.com/Iovesophy/rayt-go/pkg/scene/canvas"
 
 	"github.com/golang/geo/r3"
 )

@@ -1,7 +1,7 @@
 package geometry
 
 import (
-	"rayt-go/pkg/ray"
+	"github.com/Iovesophy/rayt-go/pkg/ray"
 
 	"github.com/golang/geo/r3"
 )

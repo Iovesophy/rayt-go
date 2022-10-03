@@ -1,4 +1,4 @@
-module rayt-go
+module github.com/Iovesophy/rayt-go
 
 go 1.18
 
