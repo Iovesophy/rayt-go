@@ -31,3 +31,7 @@ ray tracing by go
 ![before](assets/usemathrand.png)
 
 ![after](assets/useprand.png)
+
+8. add material (metal,lambertian,normal)
+
+![add-material](assets/test8.png)
