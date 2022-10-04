@@ -6,11 +6,13 @@ import (
 	"github.com/Iovesophy/rayt-go/pkg/material"
 	"github.com/Iovesophy/rayt-go/pkg/scene"
 	"github.com/Iovesophy/rayt-go/pkg/scene/camera"
+	"github.com/pkg/profile"
 
 	"github.com/golang/geo/r3"
 )
 
 func main() {
+	defer profile.Start(profile.ProfilePath("./assets")).Stop()
 	e := image.Elements{}
 	e.Format = "P3"
 	e.X = 800
