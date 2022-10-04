@@ -19,6 +19,8 @@ func Frame(frame int, i int) {
 	e.Y = 400
 	e.Sampling = 100
 	e.MaxBright = 255
+	e.MaxDepth = 50
+	e.Depth = 0
 	e.Camera = camera.New(camera.Main(e.X, e.Y))
 	e.World = append(e.World,
 		geometry.NewSphere(r3.Vector{X: 0, Y: -0.1 * float64(i), Z: -1.5}, 0.5, material.NewLambertian(scene.NewVector(0.8, 0.3, 0.3))),
