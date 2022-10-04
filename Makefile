@@ -8,5 +8,6 @@ run:
 
 .PHONY: profile
 profile:
+	cd cmd/profile && \
 	time go run main.go && \
 	go tool pprof -png assets/cpu.pprof > assets/out.png
