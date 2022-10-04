@@ -18,7 +18,7 @@ type Hitable interface {
 }
 
 type Material interface {
-	Scatter(rIn ray.VertexPair, record *Record, attenuation *r3.Vector, scattered *ray.VertexPair) bool
+	Scatter(rayIn ray.VertexPair, record *Record, attenuation *r3.Vector, scattered *ray.VertexPair) bool
 }
 
 type Record struct {
@@ -47,7 +47,6 @@ func NewSphere(center r3.Vector, radius float64, material Material) Sphere {
 }
 
 func RandomInUnitSphere() r3.Vector {
-	var unitVector = scene.NewVector(1.0, 1.0, 1.0)
 	var p = scene.NewVector(0, 0, 0)
 	for {
 		randfloat64X, err := prand.Float64()
@@ -62,7 +61,7 @@ func RandomInUnitSphere() r3.Vector {
 		if err != nil {
 			panic(err)
 		}
-		p = scene.NewVector(randfloat64X, randfloat64Y, randfloat64Z).Mul(2).Sub(unitVector)
+		p = scene.NewVector(randfloat64X, randfloat64Y, randfloat64Z).Mul(2).Sub(scene.UnitVector)
 		if p.Norm2() < 1 {
 			break
 		}

@@ -50,8 +50,11 @@ func (img Elements) CreateP3Data() Elements {
 		}
 	}
 	wg.Wait()
-	for _, v := range p {
-		img.Body.WriteString(v)
+	// transpose
+	for j := img.Y - 1; j >= 0; j-- {
+		for i := 0; i < img.X; i++ {
+			img.Body.WriteString(p[i+j*img.X])
+		}
 	}
 	return img
 }
