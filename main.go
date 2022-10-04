@@ -17,6 +17,8 @@ func main() {
 	e.Y = 400
 	e.Sampling = 100
 	e.MaxBright = 255
+	e.MaxDepth = 50
+	e.Depth = 0
 	e.Camera = camera.New(camera.Main(e.X, e.Y))
 	e.World = append(e.World,
 		geometry.NewSphere(r3.Vector{X: -1, Y: 0, Z: -1}, 0.5, material.NewMetal(scene.NewVector(0.8, 0.8, 0.8))),

@@ -16,13 +16,13 @@ type Color struct {
 	Z float64
 }
 
-func (color Color) Pixel(vertexpair ray.VertexPair, world geometry.Hitable, depth int) r3.Vector {
+func (color Color) Pixel(vertexpair ray.VertexPair, world geometry.Hitable, depth int, maxdepth int) r3.Vector {
 	var record geometry.Record
 	if world.Hit(vertexpair, 0.001, math.MaxFloat64, &record) {
 		var attenuation r3.Vector
 		var scattered ray.VertexPair
-		if depth < 50 && (*record.Material).Scatter(vertexpair, &record, &attenuation, &scattered) {
-			return scene.MulVector(attenuation, color.Pixel(scattered, world, depth+1))
+		if depth < maxdepth && (*record.Material).Scatter(vertexpair, &record, &attenuation, &scattered) {
+			return scene.MulVector(attenuation, color.Pixel(scattered, world, depth+1, maxdepth))
 		}
 		return scene.NewVector(0, 0, 0)
 	}
