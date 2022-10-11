@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/Iovesophy/rayt-go/pkg/geometry"
 	"github.com/Iovesophy/rayt-go/pkg/image"
 	"github.com/Iovesophy/rayt-go/pkg/material"
@@ -28,6 +26,5 @@ func main() {
 		geometry.NewSphere(r3.Vector{X: 0, Y: -100.5, Z: -1}, 100, material.NewMetal(scene.NewVector(0.7, 0.7, 0.7))),
 	)
 	result := e.CreateP3Data()
-	fmt.Println(result)
 	e.CreateFile("test.ppm", result.Header, result.Body.String())
 }
