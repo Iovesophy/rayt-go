@@ -35,3 +35,7 @@ ray tracing by go
 8. add material (metal,lambertian,normal)
 
 ![add-material](assets/test8.png)
+
+9. add material (fuzziness)
+
+![add-material2](assets/test9.png)
