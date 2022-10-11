@@ -64,14 +64,15 @@ func (img Elements) CreateP3Data() Elements {
 func Render(i int, j int, camera camera.Parts, wg *sync.WaitGroup, img *Elements, p []string) {
 	defer wg.Done()
 	color := scene.NewVector(0, 0, 0)
-	SuperSampling(i, j, camera, &color, geometry.New(img.World), canvas.Color{X: 0.5, Y: 0.7, Z: 1.0}, img)
+	bgcolor := canvas.Color{X: 0.5, Y: 0.7, Z: 1.0}
+	SuperSampling(i, j, camera, &color, geometry.New(img.World), bgcolor, img)
 	// fix gamma
 	color = scene.NewVector(math.Sqrt(color.X), math.Sqrt(color.Y), math.Sqrt(color.Z))
 	SetRGB(color, img)
 	p[i+j*img.X] = fmt.Sprintf(format.Body, img.Color.R, img.Color.G, img.Color.B)
 }
 
-func SuperSampling(i int, j int, camera camera.Parts, color *r3.Vector, world geometry.World, sky canvas.Color, img *Elements) {
+func SuperSampling(i int, j int, camera camera.Parts, color *r3.Vector, world geometry.World, canvas canvas.Color, img *Elements) {
 	for s := 0; s < img.Sampling; s++ {
 		randfloat64A, err := prand.Float64()
 		if err != nil {
@@ -84,7 +85,7 @@ func SuperSampling(i int, j int, camera camera.Parts, color *r3.Vector, world ge
 		}
 		v := (float64(j) + randfloat64B) / float64(img.Y)
 		ray := camera.Ray(h, v)
-		*color = color.Add(sky.Pixel(ray, world, img.Depth, img.MaxDepth))
+		*color = color.Add(canvas.Pixel(ray, world, img.Depth, img.MaxDepth))
 	}
 	*color = color.Mul(1.0 / float64(img.Sampling))
 }
