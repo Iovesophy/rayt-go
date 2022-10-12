@@ -22,7 +22,8 @@ func (color Color) Pixel(vertexpair ray.VertexPair, world geometry.Hitable, dept
 		var attenuation r3.Vector
 		var scattered ray.VertexPair
 		if depth < maxdepth && (*record.Material).Scatter(vertexpair, &record, &attenuation, &scattered) {
-			return scene.MulVector(attenuation, color.Pixel(scattered, world, depth+1, maxdepth))
+			depth++
+			return scene.MulVector(attenuation, color.Pixel(scattered, world, depth, maxdepth))
 		}
 		return scene.NewVector(0, 0, 0)
 	}
